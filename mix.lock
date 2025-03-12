@@ -1,0 +1,3 @@
+%{
+  "phx_new": {:hex, :phx_new, "1.7.20", "ba8eab3438a6c3524298cdfb44f9cee59af0935fffa4b40cbd07fe739f9ac93f", [:mix], [], "hexpm", "006bc4d57a9e1606fdf0776543f70e23cbd8b64b706b95d280b4d420f22d1d43"},
+}
