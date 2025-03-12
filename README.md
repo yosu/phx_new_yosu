@@ -8,7 +8,14 @@ A wrapper for mix phx.new with better defaults.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+`mix phx.new.yosu` generator can be installed by the command below:
+
+```
+$ mix archive.install hex phx_new_yosu
+```
+
+
+The package can be installed
 by adding `phx_new_yosu` to your list of dependencies in `mix.exs`:
 
 ```elixir
