@@ -21,6 +21,8 @@ defmodule Mix.Tasks.Phx.New.Yosu do
         # Step 3: Apply customizations
         add_custom_dependencies()
         add_styler_plugin()
+        create_custom_schema_file(project_name)
+        update_config_file(project_name)
     end
   end
 
@@ -89,5 +91,79 @@ defmodule Mix.Tasks.Phx.New.Yosu do
       "  #{key}: #{inspect(value, pretty: true)}"
     end)
     |> Enum.join(",\n")
+  end
+
+  defp create_custom_schema_file(project_name) do
+    module_name = Macro.camelize(project_name)
+
+    file_content = """
+    defmodule #{module_name}.Schema do
+      @moduledoc false
+      defmacro __using__(opts) do
+        quote do
+          use Ecto.Schema
+
+          unquote(primary_key(opts[:prefix]))
+          @foreign_key_type ShortUUID
+          @timestamps_opts [type: :utc_datetime_usec]
+        end
+      end
+
+      defp primary_key(prefix) when is_binary(prefix) do
+        quote do
+          @primary_key {:id, ShortUUID, autogenerate: true, prefix: unquote(prefix)}
+        end
+      end
+
+      defp primary_key(_) do
+        quote do
+          @primary_key {:id, ShortUUID, autogenerate: true}
+        end
+      end
+    end
+    """
+
+    # Ensure the directory exists
+    File.mkdir_p!("lib/#{project_name}")
+
+    File.write!("lib/#{project_name}/schema.ex", file_content)
+  end
+
+  defp update_config_file(project_name) do
+    module_name = Macro.camelize(project_name)
+    app_name = project_name
+
+    config_file = "config/config.exs"
+    config_content = File.read!(config_file)
+
+    # Replace the existing config block
+
+    # Define the regex pattern to match the existing config block
+    # We'll match 'config :my_app,' and any following lines until the next 'config' keyword or empty line
+    config_pattern = ~r/^config\s+:#{app_name},\s*\n(?:\s+.*\n)*?(?=^\s*(config|#|$))/m
+
+    # Build the new config block
+    new_config = """
+    config :#{app_name},
+      ecto_repos: [#{module_name}.Repo],
+      generators: [timestamp_type: :utc_datetime_usec]
+
+    config :#{app_name}, #{module_name}.Repo,
+      migration_primary_key: [type: :string],
+      migration_foreign_key: [type: :string],
+      migration_timestamps: [type: :utc_datetime_usec]
+    """
+
+    updated_config_content =
+      if Regex.match?(config_pattern, config_content) do
+        # Replace the existing block
+        Regex.replace(config_pattern, config_content, new_config)
+      else
+        # If the existing block is not found, we can add the new config at the top
+        new_config <> "\n" <> config_content
+      end
+
+    # Write back the updated config file
+    File.write!(config_file, updated_config_content)
   end
 end
