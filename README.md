@@ -1,6 +1,10 @@
-# PhxNewYosu
+# mix phx.new.yosu
 
-**TODO: Add description**
+A wrapper for mix phx.new with better defaults.
+
+- Use short UUIDs with custom schema module
+- Use utc_datetime_usec for timestamps
+- Use credo and styler for static analysis and formatter
 
 ## Installation
 
@@ -14,8 +18,3 @@ def deps do
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/phx_new_yosu>.
-
