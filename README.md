@@ -4,7 +4,8 @@ A wrapper for mix phx.new with better defaults.
 
 - Use short UUIDs with custom schema module
 - Use utc_datetime_usec for timestamps
-- Use credo and styler for static analysis and formatter
+- Use credo for static analysis and formatter
+- Add `mix check` alias to check compile, format, unlocked dependencies and credo
 
 ## Installation
 
