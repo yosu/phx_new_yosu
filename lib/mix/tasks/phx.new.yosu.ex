@@ -52,6 +52,31 @@ defmodule Mix.Tasks.Phx.New.Yosu do
 
           {:defp, meta, [fun_head, [do: updated_deps]]}
 
+        {:defp, meta, [{:aliases, _, _} = fun_head, [do: aliases_body]]} ->
+          # Ensure aliases body is a list
+          existing_aliases =
+            case aliases_body do
+              {:block, _, aliases} -> aliases
+              aliases when is_list(aliases) -> aliases
+              alias -> [alias]
+            end
+
+          additional_aliases = [
+            quote do
+              {:check,
+               [
+                 "compile --warnings-as-errors",
+                 "format --check-formatted",
+                 "deps.unlock --check-unused",
+                 "credo"
+               ]}
+            end
+          ]
+
+          updated_aliases = existing_aliases ++ additional_aliases
+
+          {:defp, meta, [fun_head, [do: updated_aliases]]}
+
         other ->
           other
       end)
