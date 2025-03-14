@@ -20,7 +20,6 @@ defmodule Mix.Tasks.Phx.New.Yosu do
 
         # Step 3: Apply customizations
         add_custom_dependencies()
-        add_styler_plugin()
         create_custom_schema_file(project_name)
         update_config_file(project_name)
     end
@@ -45,9 +44,6 @@ defmodule Mix.Tasks.Phx.New.Yosu do
               {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
             end,
             quote do
-              {:styler, "~> 1.4", only: [:dev, :test], runtime: false}
-            end,
-            quote do
               {:short_uuid, "~> 1.1", github: "yosu/short_uuid"}
             end
           ]
@@ -63,34 +59,6 @@ defmodule Mix.Tasks.Phx.New.Yosu do
     updated_mix_exs_content = Macro.to_string(new_ast)
 
     File.write!("mix.exs", updated_mix_exs_content)
-  end
-
-  defp add_styler_plugin do
-    formatter_content = File.read!(".formatter.exs")
-
-    {formatter_config, _bindings} = Code.eval_string(formatter_content)
-
-    updated_config =
-      Keyword.update(formatter_config, :plugins, [Styler], fn existing_plugins ->
-        existing_plugins ++ [Styler]
-      end)
-
-    updated_content =
-      """
-      [
-      #{formatter_config_to_string(updated_config)}
-      ]
-      """
-
-    File.write!(".formatter.exs", updated_content)
-  end
-
-  defp formatter_config_to_string(config) do
-    config
-    |> Enum.map(fn {key, value} ->
-      "  #{key}: #{inspect(value, pretty: true)}"
-    end)
-    |> Enum.join(",\n")
   end
 
   defp create_custom_schema_file(project_name) do
