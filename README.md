@@ -21,7 +21,7 @@ by adding `phx_new_yosu` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:phx_new_yosu, "~> 0.1.0"}
+    {:phx_new_yosu, "~> 0.2.0"}
   ]
 end
 ```
